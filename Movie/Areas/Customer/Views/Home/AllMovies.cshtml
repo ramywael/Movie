@@ -1,0 +1,46 @@
+﻿@model IEnumerable<MovieFilm>
+<div class="container mt-5">
+    <h3 class="text-white mb-4">Movies Collection</h3>
+    <div class="row g-4">
+        @foreach (var movie in Model)
+        {
+
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 shadow-lg rounded position-relative d-flex flex-column">
+                    <img src="~/Images/movies/@movie.ImgUrl" class="card-img-top img-fluid" alt="@movie.Name">
+
+
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@movie.Name</h5>
+                        <p class="card-text"><strong>Price:</strong> @movie.Price.ToString("C")</p>
+                        <p class="card-text"><strong>Start Date:</strong> @movie.StartDate.ToShortDateString()</p>
+                        <p class="card-text"><strong>End Date:</strong> @movie.EndDate.ToShortDateString()</p>
+                        <a href="" class="card-text"><strong>Category:</strong> @movie.category.Name</a>
+                        <!-- Display "Available" Badge If Within Date Range -->
+                        @if (DateTime.Now >= movie.StartDate && DateTime.Now <= movie.EndDate)
+                        {
+                            movie.MovieStatus = MovieStatus.Avaliable;
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-success">@movie.MovieStatus</span>
+                        }
+                        else if (DateTime.Now < movie.StartDate)
+                        {
+                            movie.MovieStatus = MovieStatus.Upcoming;
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-warning">@movie.MovieStatus</span>
+                        }
+                        else
+                        {
+                            movie.MovieStatus = MovieStatus.Expired;
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger">@movie.MovieStatus</span>
+                        }
+                        <!-- Buttons Aligned at the Bottom -->
+                        <div class="mt-auto">
+                            <a href="/Customer/Home/Details?movieId=@movie.Id" class="btn btn-primary w-100 mb-2">Details</a>
+                            <a href="#" class="btn btn-danger w-100">Book Ticket</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,69 @@
+﻿@model Cinema
+
+<div class="container my-3">
+    <div class="row mb-3">
+        <div class="d-flex justify-content-between align-content-center">
+            <div class="display-6">
+                <a href="/Cinema/Index"><i class="bi bi-arrow-left text-dark"></i></a> Edit Cinema
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <form action="/Admin/Cinema/Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="Id" value="@Model.Id">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Cinema Name</label>
+                <input type="text" class="form-control" id="name" name="Name" value="@Model.Name">
+                <span class="text-danger" asp-validation-for="Name"></span>
+
+
+            </div>
+            <div class="mb-3">
+                <label for="Description" class="form-label">Cinema Description</label>
+                <input type="text" class="form-control" id="Description" name="Description"value="@Model.Description">
+                <span class="text-danger" asp-validation-for="Description"></span>
+
+            </div>
+            <div class="mb-3">
+                <label for="Address" class="form-label">Cinema Address</label>
+                <input type="text" class="form-control" id="Address" name="Address"
+                       value="@Model.Address">
+                <span class="text-danger" asp-validation-for="Address"></span>
+
+            </div>
+            <div class="mb-3">
+                <label for="Img" class="form-label">Cinema Img</label>
+                <input type="file" class="form-control" id="Img" name="file" accept="image/*">
+                <div class="mt-2">
+                    <img id="imagePreview" src="@Url.Content("~/images/" + Model.CinemaLogo)"
+                         alt="Image Preview" style="max-width: 10%; display: block;" />
+                    <span class="text-danger" asp-validation-for="CinemaLogo"></span>
+
+                </div>
+            </div>
+   
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('Img').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '@Url.Content("~/images/" + Model.CinemaLogo)';
+            preview.style.display = 'block';
+        }
+    });
+</script>

@@ -1,0 +1,56 @@
+﻿@model Cinema
+<div class="container my-3">
+    <div class="row mb-3">
+        <div class="d-flex justify-content-between align-content-center">
+            <div class="display-6">
+                <a><i class="bi bi-arrow-left"></i></a> Create New Cinema
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <form action="/Admin/Cinema/Create" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <!-- Cinema Name -->
+                <label for="name" class="form-label">Cinema Name</label>
+                <input type="text" class="form-control" id="name" name="Name" value="@Model.Name">
+                <span class="text-danger d-block" asp-validation-for="Name"></span>
+
+                <!-- Cinema Description -->
+                <label for="Description" class="form-label">Cinema Description</label>
+                <input type="text" class="form-control" id="Description" name="Description" value="@Model.Description">
+                <span class="text-danger d-block" asp-validation-for="Description"></span>
+
+                <!-- Cinema Price -->
+                <label for="Address" class="form-label">Cinema Address</label>
+                <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address">
+                <span class="text-danger d-block" asp-validation-for="Address"></span>
+
+                <!-- Cinema Img -->
+                <label for="Img" class="form-label">Cinema Img</label>
+                <input type="file" class="form-control" id="Img" name="file">
+                <img id="imagePreview" src="" alt="Image Preview" style="display: none; max-width: 100px; margin-top: 10px;">   
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('Img').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    });
+</script>

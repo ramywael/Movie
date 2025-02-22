@@ -1,0 +1,64 @@
+﻿@model MovieFilm
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Name - Movie Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+
+    <div class="movie-details-container">
+        <!-- Background Image -->
+        <div class="movie-banner" style="background-image: url('@Model.ImgUrl');"></div>
+
+        <div class="movie-content">
+            <div class="container">
+                <div class="row">
+                    <!-- Movie Poster -->
+                    <div class="col-md-4 text-center">
+                        <img src="~/Images/movies/@Model.ImgUrl" class="movie-poster img-fluid rounded shadow-lg" alt="@Model.Name">
+                    </div>
+
+                    <!-- Movie Info -->
+                    <div class="col-md-8">
+                        <h1 class="movie-title">@Model.Name</h1>
+                        <p class="movie-meta"><strong>Start Date:</strong> @Model.StartDate.ToShortDateString() | <strong>End Date:</strong> @Model.EndDate.ToShortDateString()</p>
+                        <p class="movie-description"><strong>Price : </strong>@Model.Price.ToString("C")</p>
+                        <p class="movie-description"><strong>Cinema : </strong>@Model.cinema.Name</p>
+                        <p class="movie-description"><strong>Description : </strong>@Model.Description</p>
+                        <p class="movie-description"><strong>Category : </strong>@Model.category.Name</p>
+
+                        <div class="d-flex mt-4">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-light me-3">← Back to Movies</a>
+                            <a href="@Model.TrailerUrl" target="_blank" class="btn btn-danger">🎬 Watch Trailer</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!--  Cast Section -->
+                <div class="cast-section mt-5">
+                    <h2 class="section-title">Meet the Cast</h2>
+                    <div class="row d-flex justify-content-center flex-wrap">
+                        @foreach (var actor in Model.ActorMovies)
+                        {
+                            <div class="col-md-3 col-sm-6 d-flex justify-content-center">
+                                <div class="cast-card">
+                                    <img src="~/Images/cast/@actor.Actor.ProfilePicture" class="cast-img img-fluid" alt="@actor.Actor.FirstName @actor.Actor.LastName">
+                                    <h5 class="cast-name">@actor.Actor.FirstName @actor.Actor.LastName</h5>
+                                    <p class="cast-role">as @actor.Actor.Bio</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- End of Cast Section -->
+                </div>             
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

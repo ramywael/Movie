@@ -1,0 +1,121 @@
+﻿@model MovieFilm
+
+<div class="container my-4">
+    <!-- Header with Back Button -->
+    <div class="row mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <h2 class="text-primary">Create New Movie</h2>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-lg p-4">
+                <form action="/Admin/Movie/Create" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">Movie Name</label>
+                        <input type="text" class="form-control" id="name" name="Name" value="@Model.Name" required>
+                        <span class="text-danger" asp-validation-for="Name"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Description" class="form-label fw-bold">Movie Description</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="3">@Model.Description</textarea>
+                        <span class="text-danger" asp-validation-for="Description"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Price" class="form-label fw-bold">Movie Price ($)</label>
+                        <input type="number" class="form-control" id="Price" name="Price" value="@Model.Price" required>
+                        <span class="text-danger" asp-validation-for="Price"></span>
+                    </div>
+
+                    <!-- Image Upload & Preview -->
+                    <div class="mb-3">
+                        <label for="Img" class="form-label fw-bold">Movie Image</label>
+                        <input type="file" class="form-control" id="Img" name="file" accept="image/*" onchange="previewImage(event)">
+                        <div class="text-center mt-3">
+                            <img id="imagePreview" src="#" alt="Movie Image Preview" class="rounded shadow" style="width: 150px; height: auto; display: none;">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Trailer" class="form-label fw-bold">Movie Trailer URL</label>
+                        <input type="text" class="form-control" id="Trailer" name="TrailerUrl" value="@Model.TrailerUrl">
+                        <span class="text-danger" asp-validation-for="TrailerUrl"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="StartDate" class="form-label fw-bold">Start Date</label>
+                            <input type="datetime-local" class="form-control" id="StartDate" name="StartDate" value="@Model.StartDate">
+                            <span class="text-danger" asp-validation-for="StartDate"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="EndDate" class="form-label fw-bold">End Date</label>
+                            <input type="datetime-local" class="form-control" id="EndDate" name="EndDate" value="@Model.EndDate">
+                            <span class="text-danger" asp-validation-for="EndDate"></span>
+                        </div>
+                    </div>
+
+                    <!-- Movie Status (Auto-Calculated) -->
+                    @if (DateTime.Now >= Model.StartDate && DateTime.Now <= Model.EndDate)
+                    {
+                        Model.MovieStatus = MovieStatus.Avaliable;
+                    }
+                    else if (DateTime.Now < Model.StartDate)
+                    {
+                        Model.MovieStatus = MovieStatus.Upcoming;
+                    }
+                    else
+                    {
+                        Model.MovieStatus = MovieStatus.Expired;
+                    }
+                    <input type="hidden" name="MovieStatus" value="@Model.MovieStatus">
+
+                    <div class="mb-3">
+                        <label for="Category" class="form-label fw-bold">Category</label>
+                        <select class="form-control" name="CategoryId">
+                            @foreach (var item in ViewBag.Category)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Cinema" class="form-label fw-bold">Cinema</label>
+                        <select class="form-control" name="CinemaId">
+                            @foreach (var item in ViewBag.Cinema)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary px-4">Create Movie</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Preview Script -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var img = document.getElementById('imagePreview');
+            img.src = reader.result;
+            img.style.display = 'block';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

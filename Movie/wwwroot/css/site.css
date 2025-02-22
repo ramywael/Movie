@@ -1,0 +1,311 @@
+@import url('site.css');
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;800&display=swap");
+
+/* General Styling */
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body, html {
+    background: #000000;
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 6rem;
+    width: 100%;
+}
+
+/* Buttons Focus Effects */
+.btn:focus, .btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/* Container */
+.container {
+    padding-bottom: 3rem;
+}
+
+/* Image Styling */
+img {
+    -webkit-box-reflect: below 5px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.4));
+    -webkit-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.container img:hover {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+/* Home Page Featured Section */
+.featured_wrapper {
+    position: relative;
+}
+
+    .featured_wrapper img {
+        width: 100%;
+        height: 100vh;
+        -o-object-fit: cover;
+        object-fit: cover;
+        -o-object-position: top;
+        object-position: top;
+    }
+
+/* Title Wrapper */
+.title_wrapper {
+    position: absolute;
+    width: 100%;
+    left: 2rem;
+    bottom: 2rem;
+    padding: 20px 40px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+    .title_wrapper h1 {
+        width: 70%;
+    }
+
+/* Buttons */
+button {
+    background: #f40612 !important;
+    color: #fff !important;
+    font-size: 18px;
+    padding: 0.5rem 3rem;
+    outline: none;
+    border: 0 !important;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .title_wrapper {
+        text-align: center;
+        left: 0;
+    }
+
+        .title_wrapper h1 {
+            font-size: 32px !important;
+            width: 100%;
+        }
+
+    .container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .column.is-one-quarter img {
+        width: 100%;
+        margin-bottom: 7rem;
+    }
+}
+
+/* ============================= */
+/* Movie Details Page Styling */
+/* ============================= */
+
+.movie-details-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Background Banner */
+.movie-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50vh;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(0.5);
+    z-index: -1;
+}
+
+/* Movie Content */
+.movie-content {
+    position: relative;
+    padding-top: 12rem;
+    padding-bottom: 4rem;
+    text-align: left;
+}
+
+/* Movie Poster */
+.movie-poster {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+}
+
+    .movie-poster:hover {
+        transform: scale(1.05);
+    }
+
+/* Movie Title */
+.movie-title {
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 15px rgba(255, 0, 0, 0.7);
+}
+
+/* Meta Information */
+.movie-meta {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+/* Movie Description */
+.movie-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Buttons */
+.btn {
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-danger:hover {
+    background: #d9040e !important;
+    box-shadow: 0px 4px 15px rgba(255, 0, 0, 0.7);
+}
+
+.btn-outline-light:hover {
+    background: white;
+    color: black !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .movie-content {
+        padding-top: 10rem;
+        text-align: center;
+    }
+
+    .movie-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* ============================= */
+/*     Cast Section Styling */
+/* ============================= */
+.cast-section {
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
+    margin-bottom: 2rem;
+}
+
+.cast-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    min-height: 250px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
+    color: white; /* Ensure text is readable */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+    .cast-card:hover {
+        transform: scale(1.05);
+    }
+
+.cast-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid white; /* Makes the image stand out */
+}
+
+    .cast-img:hover {
+        border-color: red;
+    }
+
+.cast-name {
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 1.1rem;
+}
+
+.cast-role {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.card {
+    background: rgba(0, 0, 0, 0.8); /* Dark background for contrast */
+    color: white; /* Ensures text is readable */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Slight border for styling */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card-title,
+.card-text {
+    color: white; /* Makes sure text is visible */
+}
+
+.table th, .table td {
+    text-align: center;
+}
