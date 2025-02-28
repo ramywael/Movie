@@ -13,10 +13,9 @@ namespace Movie.Models
         [MaxLength(20)]
         public string Name { get; set; }
 
-
         [Required]
         [MinLength(10)]
-        [MaxLength(50)]
+        [MaxLength(255)]
         public string Description { get; set; }
 
         [Required]

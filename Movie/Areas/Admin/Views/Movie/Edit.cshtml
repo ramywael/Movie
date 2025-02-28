@@ -7,7 +7,7 @@
             <a href="javascript:history.back()" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
-            <h2 class="text-primary">Create New Movie</h2>
+            <h2 class="text-primary">Edit @Model.Name</h2>
             <div></div>
         </div>
     </div>
@@ -16,10 +16,10 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="card shadow-lg p-4">
-                <form action="/Admin/Movie/Create" method="post" enctype="multipart/form-data">
+                <form action="/Admin/Movie/Edit" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="name" class="form-label fw-bold">Movie Name</label>
-                        <input type="text" class="form-control" id="name" name="Name" value="@Model.Name" >
+                        <input type="text" class="form-control" id="name" name="Name" value="@Model.Name">
                         <span class="text-danger" asp-validation-for="Name"></span>
                     </div>
 
@@ -31,16 +31,18 @@
 
                     <div class="mb-3">
                         <label for="Price" class="form-label fw-bold">Movie Price ($)</label>
-                        <input type="number" class="form-control" id="Price" name="Price" value="@Model.Price" >
+                        <input type="number" class="form-control" id="Price" name="Price" value="@Model.Price">
                         <span class="text-danger" asp-validation-for="Price"></span>
                     </div>
 
                     <!-- Image Upload & Preview -->
                     <div class="mb-3">
-                        <label for="Img" class="form-label fw-bold">Movie Image</label>
-                        <input type="file" class="form-control" id="Img" name="file" accept="image/*" onchange="previewImage(event)">
-                        <div class="text-center mt-3">
-                            <img id="imagePreview" src="#" alt="Movie Image Preview" class="rounded shadow" style="width: 150px; height: auto; display: none;">
+                        <label for="Img" class="form-label">Cinema Img</label>
+                        <input type="file" class="form-control" id="Img" name="file" accept="image/*">
+                        <div class="mt-2">
+                            <img id="imagePreview" src="@Url.Content("~/Images/movies/" + Model.ImgUrl)"
+                                 alt="Image Preview" style="max-width: 100px; display: block;" />
+                            <span class="text-danger" asp-validation-for="ImgUrl"></span>
                         </div>
                     </div>
 
@@ -62,6 +64,9 @@
                             <span class="text-danger" asp-validation-for="EndDate"></span>
                         </div>
                     </div>
+
+                    <input type="hidden" name="Id" value="@Model.Id">
+
                     <!-- Movie Status (Auto-Calculated) -->
                     @if (DateTime.Now >= Model.StartDate && DateTime.Now <= Model.EndDate)
                     {
@@ -82,7 +87,9 @@
                         <select class="form-control" name="CategoryId">
                             @foreach (var item in ViewBag.Category)
                             {
-                                <option value="@item.Id">@item.Name</option>
+                                <option value="@item.Id" selected="@(item.Id == Model.CategoryId ? "selected" : null)">
+                                    @item.Name
+                                </option>
                             }
                         </select>
                     </div>
@@ -92,13 +99,15 @@
                         <select class="form-control" name="CinemaId">
                             @foreach (var item in ViewBag.Cinema)
                             {
-                                <option value="@item.Id">@item.Name</option>
+                                <option value="@item.Id" selected="@(item.Id == Model.CinemaId ? "selected" : null)">
+                                    @item.Name
+                                </option>
                             }
                         </select>
                     </div>
 
                     <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary px-4">Create Movie</button>
+                        <button type="submit" class="btn btn-primary px-4">Save Movie</button>
                     </div>
                 </form>
             </div>
@@ -108,13 +117,20 @@
 
 <!-- Image Preview Script -->
 <script>
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            var img = document.getElementById('imagePreview');
-            img.src = reader.result;
-            img.style.display = 'block';
+    document.getElementById('Img').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '@Url.Content("~/Images/movies/" + Model.ImgUrl)';
+            preview.style.display = 'block';
         }
-        reader.readAsDataURL(event.target.files[0]);
-    }
+    });
 </script>

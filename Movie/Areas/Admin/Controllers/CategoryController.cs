@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Movie.Date;
 using Movie.Models;
+using Movie.Repository;
+using Movie.Repository.IRepositories;
 
 namespace Movie.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        ApplicationDbContext dbContext = new ApplicationDbContext();
+        CategoryRepository categoryRepository = new CategoryRepository();
         public IActionResult Index()
         {
-            var categories = dbContext.categories;
+            var categories = categoryRepository.Get();
             return View(categories.ToList());
         }
 
@@ -24,8 +26,8 @@ namespace Movie.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                dbContext.categories.Add(category);
-                dbContext.SaveChanges();
+                categoryRepository.Create(category);
+                categoryRepository.Commit();
                 TempData["Notification"] = "Add Category Successfully";
 
                 return RedirectToAction(nameof(Index));
@@ -37,20 +39,23 @@ namespace Movie.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Edit(int categoryId)
         {
-            var category = dbContext.categories.Find(categoryId);
+            var category = categoryRepository.GetOne(e => e.Id == categoryId);
             return View(category);
         }
+
+
         [HttpPost]
+
         public IActionResult Edit(Category category)
         {
-            if (category != null)
+            if (ModelState.IsValid)
             {
-                dbContext.categories.Update(new Category()
+               categoryRepository.Edit(new Category()
                 {
                     Id = category.Id,
                     Name = category.Name
                 });
-                dbContext.SaveChanges();
+                categoryRepository.Commit();
                 TempData["Notification"] = "Update Category Successfully";
             }
             return RedirectToAction(nameof(Index));
@@ -59,17 +64,12 @@ namespace Movie.Areas.Admin.Controllers
 
         public IActionResult Delete(int categoryId)
         {
-
-            if (categoryId != null)
-            {
-                dbContext.categories.Remove(new Category
+                categoryRepository.Delete(new Category
                 {
                     Id = categoryId
                 });
-                dbContext.SaveChanges();
+                categoryRepository.Commit();
                 TempData["Notification"] = "Delete Category Successfully";
-
-            }
             return RedirectToAction(nameof(Index));
         }
 

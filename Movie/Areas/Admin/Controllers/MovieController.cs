@@ -2,24 +2,31 @@
 using Microsoft.EntityFrameworkCore;
 using Movie.Date;
 using Movie.Models;
+using Movie.Repository;
 
 namespace Movie.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class MovieController : Controller
     {
-        ApplicationDbContext dbContext = new ApplicationDbContext();
+        MovieRepository movieRepository = new MovieRepository();
+        CategoryRepository categoryRepository = new CategoryRepository();
+        CinemaRepository cinemaRepository = new CinemaRepository();
         public IActionResult Index()
         {
-            var movies = dbContext.movies.Include(e=>e.cinema);
+            var movies = movieRepository.Get(
+                includes: [
+                    e=>e.cinema,
+                    ]
+                );
             return View(movies.ToList());
         }
         [HttpGet]
         public IActionResult Create()
         {
-            var category = dbContext.categories;
+            var category = categoryRepository.Get();
             ViewBag.Category = category;
-            ViewBag.Cinema = dbContext.cinemas;
+            ViewBag.Cinema = cinemaRepository.Get();
             return View(new MovieFilm());
         }
 
@@ -35,7 +42,7 @@ namespace Movie.Areas.Admin.Controllers
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     //filePath
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\movies", fileName);
+                        "wwwroot\\Images\\movies", fileName);
 
                     //Copy Img to file
                     using (var stream = System.IO.File.Create(filePath))
@@ -47,33 +54,83 @@ namespace Movie.Areas.Admin.Controllers
 
 
 
-                    dbContext.movies.Add(movie);
-                    dbContext.SaveChanges();
+                    movieRepository.Create(movie);
+                    movieRepository.Commit();
                     TempData["Notification"] = "Add Movie Successfully";
 
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("AssignActor", "Actor", new { area = "Admin", movieId = movie.Id });
                 }
 
             }
-            ViewBag.Category = dbContext.categories;
-            ViewBag.Cinema = dbContext.cinemas;
+            ViewBag.Category = categoryRepository.Get();
+            ViewBag.Cinema = cinemaRepository.Get();
             return View(movie);
         }
+        [HttpGet]
+        public IActionResult Edit(MovieFilm movie)
+        {
+            var movieFilm = movieRepository.GetOne(e=>e.Id==movie.Id);
+            ViewBag.Category = categoryRepository.Get();
+            ViewBag.Cinema = cinemaRepository.Get();
+            return View(movieFilm);
+        }
+        [HttpPost]
+        public IActionResult Edit(MovieFilm movie,IFormFile file)
+        {
+            ModelState.Remove("file");
+            var movieInDb = movieRepository.GetOne(e => e.Id == movie.Id);
+            if (ModelState.IsValid)
+            {
+                if (file != null && file.Length > 0)
+                {
 
+                    // fileName
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    //filePath
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(),
+                        "wwwroot\\Images\\movies", fileName);
 
+                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(),
+                    "wwwroot\\Images\\movies", movieInDb.ImgUrl);
+
+                    if (System.IO.File.Exists(oldPath))
+                    {
+                        System.IO.File.Delete(oldPath);
+                    }
+                    //Copy Img to file
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        file.CopyTo(stream);
+                    }
+                    // Save Img into database
+                    movie.ImgUrl = fileName;
+                }
+                else
+                {
+                    movie.ImgUrl = movieInDb.ImgUrl;
+                }
+
+                movieRepository.Edit(movie);
+                movieRepository.Commit();
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            return View(movie);
+        }
         public IActionResult Delete(int movieId)
         {
-            var movie = dbContext.movies.FirstOrDefault(e => e.Id == movieId);
+            var movie = movieRepository.GetOne(e => e.Id == movieId);
             if (movie != null)
             {
                 var oldPath = Path.Combine(Directory.GetCurrentDirectory(),
-             "wwwroot\\images\\movies", movie.ImgUrl);
+             "wwwroot\\Images\\movies", movie.ImgUrl);
                 if (System.IO.File.Exists(oldPath))
                 {
                     System.IO.File.Delete(oldPath);
                 }
-                dbContext.movies.Remove(movie);
-                dbContext.SaveChanges();
+               movieRepository.Delete(movie);
+                movieRepository.Commit();
                 TempData["Notification"] = "Delete Product Successfully";
                 return RedirectToAction(nameof(Index));
             }

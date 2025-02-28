@@ -2,16 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Movie.Date;
 using Movie.Models;
+using Movie.Repository;
 
 namespace Movie.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CinemaController : Controller
     {
-        ApplicationDbContext dbContext = new ApplicationDbContext();
+        CinemaRepository cinemaRepository = new CinemaRepository();
         public IActionResult Index()
         {
-            var cinemas = dbContext.cinemas;
+            var cinemas = cinemaRepository.Get();
             return View(cinemas.ToList());
         }
 
@@ -34,7 +35,7 @@ namespace Movie.Areas.Admin.Controllers
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     //filePath
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(),
-                        "wwwroot\\images", fileName);
+                        "wwwroot\\Images\\cinemas", fileName);
 
                     //Copy Img to file
                     using (var stream = System.IO.File.Create(filePath))
@@ -46,8 +47,8 @@ namespace Movie.Areas.Admin.Controllers
 
 
 
-                    dbContext.cinemas.Add(cinema);
-                    dbContext.SaveChanges();
+                  cinemaRepository.Create(cinema);
+                   cinemaRepository.Commit();
                     TempData["Notification"] = "Add Cinema Successfully";
 
                     return RedirectToAction(nameof(Index));
@@ -64,7 +65,7 @@ namespace Movie.Areas.Admin.Controllers
         public IActionResult Edit(Cinema cinema)
         {
 
-            var cinemaEdit = dbContext.cinemas.FirstOrDefault(e => e.Id == cinema.Id);
+            var cinemaEdit = cinemaRepository.GetOne(e => e.Id == cinema.Id);
             return View(cinemaEdit);
         }
 
@@ -73,7 +74,7 @@ namespace Movie.Areas.Admin.Controllers
         public IActionResult Edit(Cinema cinema, IFormFile file)
         {
             ModelState.Remove("file");
-            var cinemaInDb = dbContext.cinemas.AsNoTracking().FirstOrDefault(e => e.Id == cinema.Id);
+            var cinemaInDb = cinemaRepository.GetOne(e => e.Id == cinema.Id);
             if (ModelState.IsValid)
             {
                 if (file != null && file.Length > 0)
@@ -83,10 +84,11 @@ namespace Movie.Areas.Admin.Controllers
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     //filePath
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(),
-                        "wwwroot\\images", fileName);
+                        "wwwroot\\Images\\cinemas", fileName);
 
                     var oldPath = Path.Combine(Directory.GetCurrentDirectory(),
-                    "wwwroot\\images", cinemaInDb.CinemaLogo);
+                    "wwwroot\\Images\\cinemas", cinemaInDb.CinemaLogo);
+
                     if (System.IO.File.Exists(oldPath))
                     {
                         System.IO.File.Delete(oldPath);
@@ -104,8 +106,8 @@ namespace Movie.Areas.Admin.Controllers
                     cinema.CinemaLogo = cinemaInDb.CinemaLogo;
                 }
 
-                dbContext.cinemas.Update(cinema);
-                dbContext.SaveChanges();
+               cinemaRepository.Edit(cinema);
+               cinemaRepository.Commit();
                 TempData["Notification"] = "Update Cinema Successfully";
                 return RedirectToAction(nameof(Index));
 
@@ -116,18 +118,27 @@ namespace Movie.Areas.Admin.Controllers
         public IActionResult Delete(int cinemaId)
         {
 
-            if (cinemaId != null)
+            var cinema = cinemaRepository.GetOne(e=>e.Id==cinemaId);
+            if (cinema != null)
             {
-                dbContext.cinemas.Remove(new Cinema
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory()
+                    , "wwwroot\\Images\\cinemas", cinema.CinemaLogo);
+                if (System.IO.File.Exists(oldPath))
+                {
+                    System.IO.File.Delete(oldPath);
+                }
+                cinemaRepository.Delete(new Cinema
                 {
                     Id = cinemaId
                 });
-                dbContext.SaveChanges();
-                TempData["Notification"] = "Delete Category Successfully";
+                cinemaRepository.Commit();
+                TempData["Notification"] = "Delete Cinema Successfully";
+
+
+                return RedirectToAction(nameof(Index));
 
             }
-            return RedirectToAction(nameof(Index));
-
+            return View("NotFoundPage");
         }
     }
 }
