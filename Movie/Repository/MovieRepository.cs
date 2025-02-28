@@ -8,8 +8,12 @@ namespace Movie.Repository
 {
     public class MovieRepository : Repository<MovieFilm>, IMovieRepository
     {
+        private readonly ApplicationDbContext _dbContext;
 
-        private readonly ApplicationDbContext _dbContext=new ApplicationDbContext();
+        public MovieRepository(ApplicationDbContext dbContext) : base(dbContext)
+        {
+            this._dbContext = dbContext;
+        }
 
         public MovieFilm? GetDetailsByMovieId(int Id)
         {

@@ -3,13 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using Movie.Date;
 using Movie.Models;
 using Movie.Repository;
+using Movie.Repository.IRepositories;
 
 namespace Movie.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CinemaController : Controller
     {
-        CinemaRepository cinemaRepository = new CinemaRepository();
+        ICinemaRepository cinemaRepository ;
+
+
+        public CinemaController(ICinemaRepository cinemaRepository)
+        {
+            this.cinemaRepository = cinemaRepository ;
+        }
         public IActionResult Index()
         {
             var cinemas = cinemaRepository.Get();

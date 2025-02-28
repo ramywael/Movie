@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Movie.Date;
+using Movie.Repository;
+using Movie.Repository.IRepositories;
+
 namespace Movie
 {
     public class Program
@@ -8,6 +13,13 @@ namespace Movie
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IMovieRepository,MovieRepository>();
+            builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             var app = builder.Build();
 

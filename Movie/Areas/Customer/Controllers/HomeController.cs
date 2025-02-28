@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Movie.Date;
 using Movie.Models;
 using Movie.Repository;
+using Movie.Repository.IRepositories;
 
 namespace Movie.Areas.Customer.Controllers
 {
@@ -10,9 +11,19 @@ namespace Movie.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         //ApplicationDbContext dbContext = new ApplicationDbContext();
-        MovieRepository movieRepository = new MovieRepository();
-        CategoryRepository categoryRepository = new CategoryRepository();
-        CinemaRepository cinemaRepository = new CinemaRepository();
+
+        IMovieRepository movieRepository;
+        ICategoryRepository categoryRepository;
+        ICinemaRepository cinemaRepository;
+        public HomeController(IMovieRepository movieRepository, ICategoryRepository categoryRepository, ICinemaRepository cinemaRepository)
+        {
+            this.cinemaRepository = cinemaRepository;
+            this.movieRepository = movieRepository; 
+            this.categoryRepository = categoryRepository;
+        }
+        //MovieRepository movieRepository = new MovieRepository();
+        //CategoryRepository categoryRepository = new CategoryRepository();
+        //CinemaRepository cinemaRepository = new CinemaRepository();
         public IActionResult Index(string movieName)
         {
           var movies = movieRepository.Get(

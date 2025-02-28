@@ -7,12 +7,13 @@ namespace Movie.Repository
 {
     public class Repository<T> : IRepository<T> where T : class 
     {
-        private readonly ApplicationDbContext _dbContext = new ApplicationDbContext();
+        private readonly ApplicationDbContext _dbContext;
 
         private readonly DbSet<T> dbSet;
 
-        public Repository()
+        public Repository(ApplicationDbContext dbContext)
         {
+            this._dbContext = dbContext;
             dbSet = _dbContext.Set<T>();
         }
         public void Create(T entity)

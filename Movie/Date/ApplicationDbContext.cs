@@ -17,8 +17,14 @@ namespace Movie.Date
         public DbSet<ActorMovie> actorMovies { get; set; }
 
 
+        public ApplicationDbContext()
+        {
 
-
+        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+        {
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

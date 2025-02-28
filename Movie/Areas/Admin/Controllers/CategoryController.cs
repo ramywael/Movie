@@ -9,7 +9,10 @@ namespace Movie.Areas.Admin.Controllers
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        CategoryRepository categoryRepository = new CategoryRepository();
+        ICategoryRepository categoryRepository;
+        public CategoryController(ICategoryRepository categoryRepository) { 
+            this.categoryRepository = categoryRepository;
+        }
         public IActionResult Index()
         {
             var categories = categoryRepository.Get();
