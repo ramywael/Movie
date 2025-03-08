@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Movie.Date;
+using Movie.Models;
 using Movie.Repository;
 using Movie.Repository.IRepositories;
 
@@ -16,6 +18,10 @@ namespace Movie
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                      .AddEntityFrameworkStores<ApplicationDbContext>()
+                      .AddDefaultTokenProviders();
 
             builder.Services.AddScoped<IMovieRepository,MovieRepository>();
             builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();

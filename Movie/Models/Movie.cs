@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Movie.Models
 {
@@ -10,12 +11,11 @@ namespace Movie.Models
 
         [Required]
         [MinLength(6)]
-        [MaxLength(20)]
+        [MaxLength(60)]
         public string Name { get; set; }
 
         [Required]
-        [MinLength(10)]
-        [MaxLength(255)]
+        [Column(TypeName = "nvarchar(MAX)")]  // ✅ This allows unlimited text storage
         public string Description { get; set; }
 
         [Required]

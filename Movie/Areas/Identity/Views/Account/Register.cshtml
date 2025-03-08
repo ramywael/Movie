@@ -1,0 +1,66 @@
+﻿@using Movie.Models.ViewModels
+@{
+    ViewData["Title"] = "Register";
+}
+@model RegisterVm
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 rounded">
+            <div class="card-body">
+                <h2 class="text-center text-primary">Create an Account</h2>
+                <hr />
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="UserName" class="form-label">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input asp-for="UserName" class="form-control" placeholder="Enter your username" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Enter a strong password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">
+                            <i class="fas fa-check-circle"></i> Confirm Password
+                        </label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm your password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <p>Already have an account? <a href="/Account/Login" class="text-primary">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,69 @@
+﻿@model Movie.Models.ViewModels.ProfileVm
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1 class="text-center text-primary mb-4">User Profile</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-body">
+                <form asp-action="Profile" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- Username Field -->
+                    <div class="mb-3">
+                        <label asp-for="UserName" class="form-label fw-bold"></label>
+                        <input asp-for="UserName" class="form-control" placeholder="Enter your username" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-bold"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Password Update Section -->
+                    <div class="border rounded p-3 bg-light">
+                        <h5 class="text-secondary">Change Password</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="CurrentPassword" class="form-label fw-bold"></label>
+                            <input asp-for="CurrentPassword" class="form-control" placeholder="Enter current password" type="password" />
+                            <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NewPassword" class="form-label fw-bold"></label>
+                            <input asp-for="NewPassword" class="form-control" placeholder="Enter new password" type="password" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label fw-bold"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm new password" type="password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
