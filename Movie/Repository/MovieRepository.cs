@@ -2,7 +2,6 @@
 using Movie.Date;
 using Movie.Models;
 using Movie.Repository.IRepositories;
-using System.Linq.Expressions;
 
 namespace Movie.Repository
 {
