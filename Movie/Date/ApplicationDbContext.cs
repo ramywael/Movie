@@ -19,7 +19,7 @@ namespace Movie.Date
 
         public DbSet<ActorMovie> actorMovies { get; set; }
 
-
+        public DbSet<Cart> Carts { get; set; }
         public ApplicationDbContext()
         {
 
@@ -40,10 +40,8 @@ namespace Movie.Date
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ActorMovie>().HasKey(t => new { t.ActorId, t.MovieFilmId });
+            modelBuilder.Entity<Cart>().HasKey(e=>new {e.ApplicationUserId,e.MovieFilmId});
         }
-        public DbSet<Movie.Models.ViewModels.RegisterVm> RegisterVm { get; set; } = default!;
-        public DbSet<Movie.Models.ViewModels.LoginVm> LoginVm { get; set; } = default!;
-        public DbSet<Movie.Models.ViewModels.ProfileVm> ProfileVm { get; set; } = default!;
-
+    
     }
 }

@@ -1,6 +1,9 @@
-﻿namespace Movie.Repository.IRepositories
+﻿using Movie.Models;
+
+namespace Movie.Repository.IRepositories
 {
-    public interface ICartRepository
+    public interface ICartRepository : IRepository<Cart>
     {
+
     }
 }

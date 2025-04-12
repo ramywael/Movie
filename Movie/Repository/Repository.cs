@@ -59,7 +59,7 @@ namespace Movie.Repository
                     entites = entites.Include(include);
                 }
             }
-            if (isTrack)
+            if (!isTrack)
             {
                 entites = entites.AsNoTracking();
             }

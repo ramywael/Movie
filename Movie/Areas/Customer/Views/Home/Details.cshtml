@@ -35,6 +35,9 @@
                         <div class="d-flex mt-4">
                             <a href="@Url.Action("Index", "Home")" class="btn btn-outline-light me-3">← Back to Movies</a>
                             <a href="@Model.TrailerUrl" target="_blank" class="btn btn-danger">🎬 Watch Trailer</a>
+                            <a href="/Customer/Cart/AddToCart?movieId=@Model.Id" class="btn btn-success">
+                                🛒 Add to Cart
+                            </a>
                         </div>
                     </div>
                 </div>

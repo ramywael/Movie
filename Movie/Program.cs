@@ -26,6 +26,8 @@ namespace Movie
             builder.Services.AddScoped<IMovieRepository,MovieRepository>();
             builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+
 
             var app = builder.Build();
 
