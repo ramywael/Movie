@@ -17,11 +17,25 @@ namespace Movie.Areas.Customer.Controllers
             this._userManager = userManager;
             this._cartRepository = cartRepository;
         }
+
+        private string? GetUserIdHelper()
+        {
+            return _userManager.GetUserId(User);
+        }
+
+        private Cart? GetCart(string userApp,int movieId)
+        {
+            return _cartRepository.GetOne(
+            filter: e => e.ApplicationUserId == userApp
+            && e.MovieFilmId == movieId);
+        }
+
+        public IActionResult RedirectToLogin() =>RedirectToAction("Login", "Account", new { area = "Identity" });
         public IActionResult Index()
         {
-            var userApp = _userManager.GetUserId(User);
+            string? userApp = GetUserIdHelper();
             if (userApp == null)
-                return RedirectToAction("Login", "Account", new { area = "Identity" });
+                return RedirectToLogin();
 
             var cart = _cartRepository.Get(
                 filter: e => e.ApplicationUserId == userApp,
@@ -45,13 +59,11 @@ namespace Movie.Areas.Customer.Controllers
 
         public IActionResult AddToCart(int movieId)
         {
-            var userApp = _userManager.GetUserId(User);
+            string? userApp = GetUserIdHelper();
             if (userApp == null)
-                return RedirectToAction("Login", "Account", new { area = "Identity" });
+                return RedirectToLogin();
 
-            var cartItem = _cartRepository.GetOne(
-            filter: e => e.ApplicationUserId == userApp
-            && e.MovieFilmId == movieId);
+            Cart? cartItem = GetCart(userApp,movieId);
 
             if (cartItem != null)
             {
@@ -83,13 +95,50 @@ namespace Movie.Areas.Customer.Controllers
 
         public IActionResult Increment(int movieId)
         {
-            var userApp= _userManager.GetUserId(User);
+            string? userApp = GetUserIdHelper();
             if (userApp == null)
-                return RedirectToAction("Login", "Account", new {area="Identity" });
-            var cartItem = _cartRepository.GetOne(filter:e=>e.MovieFilmId==movieId && e.ApplicationUserId == userApp);
+                return RedirectToLogin();
+
+            Cart? cartItem = GetCart(userApp, movieId);
+
             if (cartItem != null)
             {
                 cartItem.Count++;
+                _cartRepository.Commit();
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Shared");
+        }
+
+        public IActionResult Decrement(int movieId)
+        {
+            string? userApp = GetUserIdHelper();
+
+            if (userApp == null)
+                return RedirectToLogin();
+
+            Cart? cartItem = GetCart(userApp, movieId);
+            if (cartItem != null)
+            {
+                if (cartItem.Count > 1)
+                {
+                    cartItem.Count--;
+                    _cartRepository.Commit();
+                }
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Shared");
+        }
+
+        public IActionResult Delete(int movieId)
+        {
+            string? userApp = GetUserIdHelper();
+            if (userApp == null)
+                return RedirectToLogin();
+            Cart? cartItem = GetCart(userApp, movieId);
+            if (cartItem != null)
+            {
+                _cartRepository.Delete(cartItem);
                 _cartRepository.Commit();
                 return RedirectToAction("Index");
             }
