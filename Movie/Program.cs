@@ -4,6 +4,8 @@ using Movie.Date;
 using Movie.Models;
 using Movie.Repository;
 using Movie.Repository.IRepositories;
+using Movie.Utility;
+using Stripe;
 
 namespace Movie
 {
@@ -28,6 +30,8 @@ namespace Movie
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
 
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
