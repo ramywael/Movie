@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Movie.Date;
 using Movie.Models;
@@ -6,6 +7,7 @@ using Movie.Models;
 namespace Movie.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ActorController : Controller
     {
         ApplicationDbContext dbContext=new ApplicationDbContext();
