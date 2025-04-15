@@ -20,21 +20,9 @@ namespace Movie.Repository
         {
             dbSet.Add(entity);
         }
-
-        public void CreateAll(T entities)
-        {
-            dbSet.AddRange(entities);
-        }
-
         public void Delete(T entity)
         {
             dbSet.Remove(entity);
-        }
-
-
-        public void DeleteAll(T entities)
-        {
-            dbSet.RemoveRange(entities);
         }
 
         public void Edit(T entity)

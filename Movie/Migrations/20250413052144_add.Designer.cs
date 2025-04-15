@@ -12,8 +12,8 @@ using Movie.Date;
 namespace Movie.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250308165831_addIdentity")]
-    partial class addIdentity
+    [Migration("20250413052144_add")]
+    partial class add
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -286,6 +286,24 @@ namespace Movie.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Movie.Models.Cart", b =>
+                {
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("MovieFilmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationUserId", "MovieFilmId");
+
+                    b.HasIndex("MovieFilmId");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("Movie.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -387,22 +405,65 @@ namespace Movie.Migrations
                     b.ToTable("movies");
                 });
 
-            modelBuilder.Entity("Movie.Models.OrderItem", b =>
+            modelBuilder.Entity("Movie.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<int?>("MovieFilmId")
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<string>("PaymentStripeId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("MovieFilmId");
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("orderItems");
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("TotalSum")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Movie.Models.OrderItem", b =>
+                {
+                    b.Property<int>("MovieFilmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("MovieFilmId", "OrderId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("ActorMovieFilm", b =>
@@ -490,6 +551,25 @@ namespace Movie.Migrations
                     b.Navigation("MovieFilm");
                 });
 
+            modelBuilder.Entity("Movie.Models.Cart", b =>
+                {
+                    b.HasOne("Movie.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Movie.Models.MovieFilm", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieFilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Movie.Models.MovieFilm", b =>
                 {
                     b.HasOne("Movie.Models.Category", "category")
@@ -509,11 +589,34 @@ namespace Movie.Migrations
                     b.Navigation("cinema");
                 });
 
+            modelBuilder.Entity("Movie.Models.Order", b =>
+                {
+                    b.HasOne("Movie.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("Movie.Models.OrderItem", b =>
                 {
-                    b.HasOne("Movie.Models.MovieFilm", null)
+                    b.HasOne("Movie.Models.MovieFilm", "MovieFilm")
                         .WithMany("orderItems")
-                        .HasForeignKey("MovieFilmId");
+                        .HasForeignKey("MovieFilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Movie.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MovieFilm");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Movie.Models.Actor", b =>

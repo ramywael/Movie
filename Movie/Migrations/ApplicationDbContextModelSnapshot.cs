@@ -34,7 +34,7 @@ namespace Movie.Migrations
 
                     b.HasIndex("moviesId");
 
-                    b.ToTable("ActorMovieFilm");
+                    b.ToTable("ActorMovieFilm", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -200,7 +200,7 @@ namespace Movie.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("actors");
+                    b.ToTable("actors", (string)null);
                 });
 
             modelBuilder.Entity("Movie.Models.ActorMovie", b =>
@@ -215,7 +215,7 @@ namespace Movie.Migrations
 
                     b.HasIndex("MovieFilmId");
 
-                    b.ToTable("actorMovies");
+                    b.ToTable("actorMovies", (string)null);
                 });
 
             modelBuilder.Entity("Movie.Models.ApplicationUser", b =>
@@ -298,7 +298,7 @@ namespace Movie.Migrations
 
                     b.HasIndex("MovieFilmId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Movie.Models.Category", b =>
@@ -316,7 +316,7 @@ namespace Movie.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("categories");
+                    b.ToTable("categories", (string)null);
                 });
 
             modelBuilder.Entity("Movie.Models.Cinema", b =>
@@ -347,7 +347,7 @@ namespace Movie.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("cinemas");
+                    b.ToTable("cinemas", (string)null);
                 });
 
             modelBuilder.Entity("Movie.Models.MovieFilm", b =>
@@ -399,25 +399,68 @@ namespace Movie.Migrations
 
                     b.HasIndex("CinemaId");
 
-                    b.ToTable("movies");
+                    b.ToTable("movies", (string)null);
+                });
+
+            modelBuilder.Entity("Movie.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentStripeId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("TotalSum")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Movie.Models.OrderItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("MovieFilmId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("MovieFilmId")
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
 
-                    b.HasIndex("MovieFilmId");
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
-                    b.ToTable("orderItems");
+                    b.HasKey("MovieFilmId", "OrderId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("ActorMovieFilm", b =>
@@ -543,11 +586,34 @@ namespace Movie.Migrations
                     b.Navigation("cinema");
                 });
 
+            modelBuilder.Entity("Movie.Models.Order", b =>
+                {
+                    b.HasOne("Movie.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("Movie.Models.OrderItem", b =>
                 {
-                    b.HasOne("Movie.Models.MovieFilm", null)
+                    b.HasOne("Movie.Models.MovieFilm", "MovieFilm")
                         .WithMany("orderItems")
-                        .HasForeignKey("MovieFilmId");
+                        .HasForeignKey("MovieFilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Movie.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MovieFilm");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Movie.Models.Actor", b =>

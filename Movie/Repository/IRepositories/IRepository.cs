@@ -9,12 +9,9 @@ namespace Movie.Repository.IRepositories
     {
         public void Create(T entity);
 
-        public void CreateAll(T entities);
-
         public void Delete(T entity);
 
 
-        public void DeleteAll(T entities);
         public void Edit(T entity);
 
         public IEnumerable<T> Get(Expression<Func<T, bool>>? filter = null,

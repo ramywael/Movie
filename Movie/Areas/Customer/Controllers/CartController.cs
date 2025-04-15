@@ -46,7 +46,7 @@ namespace Movie.Areas.Customer.Controllers
             CartVm cartVm = new CartVm()
             {
                 Carts = cart,
-                TotalPrice = cart.Sum(e => e.Movie.Price * e.Count)
+                TotalPrice = Math.Round(cart.Sum(e => e.Movie.Price * e.Count),2)
             };
 
             return View(cartVm);

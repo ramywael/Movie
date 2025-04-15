@@ -29,9 +29,15 @@ namespace Movie
             builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailConfiguration"));
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             var app = builder.Build();
 
