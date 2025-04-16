@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Movie.Models;
+using Movie.Models.ViewModels;
 using Movie.Repository.IRepositories;
 using Stripe;
 using Stripe.Climate;
@@ -29,7 +30,15 @@ namespace Movie.Areas.Customer.Controllers
         public IActionResult Details(int orderId)
         {
             var orderItems = _orderItemRepository.Get(filter: e => e.OrderId == orderId, includes: [e => e.MovieFilm]);
-            return View(orderItems.ToList());
+            var order = _orderRepository.GetOne(filter: e => e.OrderId == orderId);
+            OrderDetailsVm orderDetailsVm = new OrderDetailsVm()
+            {
+                OrderItems = orderItems.ToList(),
+                CanRefund=false,
+                Order=order
+            };
+
+            return View(orderDetailsVm);
         }
         public IActionResult Refund(int orderId)
         {
@@ -47,6 +56,7 @@ namespace Movie.Areas.Customer.Controllers
 
                 order.PaymentStripeId = null;
                 order.PaymentStatus = enPaymentStatus.Cancelled;
+                order.Status = false;
                 _orderRepository.Commit();
 
                 return View();
@@ -54,10 +64,10 @@ namespace Movie.Areas.Customer.Controllers
             return View("~/Views/Shared/NotFoundPage.cshtml");
         }
 
-        public IActionResult PartielRefund(int orderId,int movieId)
+        public IActionResult PartielRefund(int orderId, int movieId)
         {
-            var orderItem = _orderItemRepository.GetOne(filter:e=>e.OrderId==orderId && e.MovieFilmId == movieId, includes: [e=>e.MovieFilm,e=>e.Order]);
-            if(orderItem != null && orderItem.Order.Status == true)
+            var orderItem = _orderItemRepository.GetOne(filter: e => e.OrderId == orderId && e.MovieFilmId == movieId, includes: [e => e.MovieFilm, e => e.Order]);
+            if (orderItem != null && orderItem.Order.Status == true)
             {
                 RefundCreateOptions options = new RefundCreateOptions()
                 {

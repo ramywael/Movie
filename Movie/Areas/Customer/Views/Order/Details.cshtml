@@ -1,9 +1,10 @@
-﻿@model IEnumerable<Movie.Models.OrderItem>
+﻿@using Movie.Models.ViewModels
+@model OrderDetailsVm
 
 <div class="container mt-5">
     <h2 class="text-center text-white mb-4">Order Details</h2>
 
-    @if (Model.Any())
+    @if (Model.OrderItems.Any())
     {
         <table class="table table-dark table-striped table-hover">
             <thead>
@@ -16,16 +17,16 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.OrderItems)
                 {
-                    bool canRefund = item.MovieFilm.EndDate > DateTime.Now;
+                    Model.CanRefund = Model.Order.Status && item.MovieFilm.EndDate > DateTime.Now;
                     <tr>
                         <td>@item.MovieFilm.Name</td>
                         <td>@item.Price.ToString("C")</td>
                         <td>@item.Count</td>
                         <td>@((item.Price * item.Count).ToString("C"))</td>
                         <td>
-                            @if (canRefund)
+                            @if (Model.CanRefund)
                             {
                                 <form method="post" asp-area="Customer" asp-action="PartielRefund" asp-controller="Order" style="display:inline;">
                                     <input type="hidden" name="orderId" value="@item.OrderId" />
@@ -42,6 +43,16 @@
                 }
             </tbody>
         </table>
+
+        <!-- ✅ Moved Refund Order button outside the loop -->
+        <div class="text-center mt-5">
+            <form asp-area="Customer" asp-action="Refund" asp-controller="Order" method="post">
+                <input type="hidden" name="orderId" value="@Model.Order.OrderId" />
+                <button type="submit" class="btn btn-danger mt-5" @(Model.CanRefund ? "" : "disabled")>
+                    Refund Order
+                </button>
+            </form>
+        </div>
     }
     else
     {
