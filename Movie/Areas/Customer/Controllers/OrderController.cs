@@ -69,6 +69,16 @@ namespace Movie.Areas.Customer.Controllers
                 var session = service.Create(options);
                 _orderItemRepository.Delete(orderItem);
                 _orderItemRepository.Commit();
+                var remainingItems = _orderItemRepository.Get(filter: e => e.OrderId == orderId);
+
+                if (!remainingItems.Any())
+                {
+                    orderItem.Order.Status = false;
+                    orderItem.Order.PaymentStatus = enPaymentStatus.Cancelled;
+                    orderItem.Order.PaymentStripeId = null;
+                }
+
+                _orderItemRepository.Commit();
                 return View("Refund");
             }
             return View("~/Views/Shared/NotFoundPage.cshtml");
