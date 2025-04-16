@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Movie.Models.OrderItem>
+
+<div class="container mt-5">
+    <h2 class="text-center text-white mb-4">Order Details</h2>
+
+    @if (Model.Any())
+    {
+        <table class="table table-dark table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    bool canRefund = item.MovieFilm.EndDate > DateTime.Now;
+                    <tr>
+                        <td>@item.MovieFilm.Name</td>
+                        <td>@item.Price.ToString("C")</td>
+                        <td>@item.Count</td>
+                        <td>@((item.Price * item.Count).ToString("C"))</td>
+                        <td>
+                            @if (canRefund)
+                            {
+                                <form method="post" asp-area="Customer" asp-action="PartielRefund" asp-controller="Order" style="display:inline;">
+                                    <input type="hidden" name="orderId" value="@item.OrderId" />
+                                    <input type="hidden" name="movieId" value="@item.MovieFilmId" />
+                                    <button type="submit" class="btn btn-warning btn-sm">Refund Item</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Refundable</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            No items found in this order.
+        </div>
+    }
+</div>

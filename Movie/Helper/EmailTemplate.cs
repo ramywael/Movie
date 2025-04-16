@@ -18,7 +18,7 @@ namespace Movie.Helper
                 <p><strong>Status:</strong> {order.PaymentStatus}</p>
             </div>
 
-            <a href='{scheme}://{host}/Customer/Order/Details/{order.OrderId}' 
+            <a href='{scheme}://{host}/Customer/Order/Details?orderId={order.OrderId}' 
                 style='display:inline-block; padding:10px 20px; background-color:#4CAF50; color:white; text-decoration:none; border-radius:5px;'>
                 🔍 View Order Details
             </a>

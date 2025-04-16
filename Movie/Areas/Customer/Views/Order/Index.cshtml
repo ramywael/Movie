@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Order>
+@if (Model.Any())
+{
+    <div class="container mt-5">
+        <h2 class="text-center text-white mb-4">Orders</h2>
+
+        <table class="table table-dark table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Order Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.PaymentStatus</td>
+                        <td>
+                            <a href="/Customer/Order/Details?orderId=@order.OrderId" class="btn btn-primary btn-sm">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}else{
+    <div class="container mt-5">
+        <h2 class="text-center text-white">No Orders Yet</h2>
+    </div>
+}
