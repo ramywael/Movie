@@ -4,6 +4,7 @@ using Movie.Date;
 using Movie.Models;
 using Movie.Repository;
 using Movie.Repository.IRepositories;
+using Movie.Services.BackgroundTasks;
 using Movie.Utility;
 using Stripe;
 
@@ -38,6 +39,7 @@ namespace Movie
 
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailConfiguration"));
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddHostedService<MovieStatusUpdater>();
 
             var app = builder.Build();
 

@@ -1,0 +1,48 @@
+﻿@model List<Order>
+
+<div class="container my-3">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="display-6 m-0">All Orders</h2>
+                <a href="/Admin/Order/Create" class="btn btn-success">
+                    <i class="bi bi-plus-square"></i> Create New Order
+                </a>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <table class="table table-hover text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">CustomerEmail</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <th scope="row">@item.OrderId</th>
+                                <th scope="row">@item.ApplicationUser.Email</th>
+                                <td scope="row">@item.TotalSum</td>
+                                <td scope="row">
+                                    <a asp-area="Admin"
+                                       asp-controller="Order"
+                                       asp-action="Details"
+                                       asp-route-id="@item.OrderId"
+                                       class="btn btn-info btn-sm">
+                                        View Order Details
+                                    </a>
+                                </td>
+                            </tr>
+                       
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
