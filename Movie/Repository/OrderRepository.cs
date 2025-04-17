@@ -12,5 +12,10 @@ namespace Movie.Repository
         {
             this.dbContext = dbContext;
         }
+
+        public void DeleteRange(IEnumerable<Order> entities)
+        {
+            dbContext.RemoveRange(entities);
+        }
     }
 }

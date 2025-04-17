@@ -31,26 +31,30 @@ namespace Movie.Areas.Customer.Controllers
         {
             return View();
         }
+
         public IActionResult Pay()
         {
             var userApp = _userManager.GetUserId(User);
-            var cartItems = _cartRepository.Get(filter: e => e.ApplicationUserId == userApp, includes: [
-                e=>e.Movie,
-                ]);
-            Order order = new Order();
-            order.ApplicationUserId = userApp;
-            order.TotalSum = cartItems.Sum(e => e.Movie.Price * e.Count);
+            var cartItems = _cartRepository.Get(filter: e => e.ApplicationUserId == userApp, includes: [e => e.Movie]);
+
+            if (cartItems == null || !cartItems.Any())
+                return View("~/Views/Shared/NotFoundPage.cshtml");
+
+            // Clean up old pending orders
+            var oldPendingOrders = _orderRepository.Get(filter: e => e.ApplicationUserId == userApp && e.Status == false).ToList();
+            _orderRepository.DeleteRange(oldPendingOrders);
+            _orderRepository.Commit();
+
+            // Create new order
+            Order order = new Order
+            {
+                ApplicationUserId = userApp,
+                TotalSum = cartItems.Sum(e => e.Movie.Price * e.Count),
+            };
             _orderRepository.Create(order);
             _orderRepository.Commit();
-            var options = new SessionCreateOptions
-            {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>(),
-                Mode = "payment",
-                SuccessUrl = $"{Request.Scheme}://{Request.Host}/Customer/Checkout/Success?orderId={order.OrderId}",
-                CancelUrl = $"{Request.Scheme}://{Request.Host}/Customer/Checkout/Cancel?orderId={order.OrderId}",
-            };
 
+            // Add new order items
             List<OrderItem> OrderItems = new List<OrderItem>();
             foreach (var item in cartItems)
             {
@@ -62,9 +66,19 @@ namespace Movie.Areas.Customer.Controllers
                     Price = item.Movie.Price,
                 });
             }
-
             _orderItemRepository.CreateRange(OrderItems);
             _orderItemRepository.Commit();
+
+            // Stripe payment session
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = $"{Request.Scheme}://{Request.Host}/Customer/Checkout/Success?orderId={order.OrderId}",
+                CancelUrl = $"{Request.Scheme}://{Request.Host}/Customer/Checkout/Cancel?orderId={order.OrderId}",
+            };
+
             foreach (var item in cartItems)
             {
                 options.LineItems.Add(new SessionLineItemOptions
@@ -84,8 +98,10 @@ namespace Movie.Areas.Customer.Controllers
             }
             var service = new SessionService();
             var session = service.Create(options);
+
             order.SessionId = session.Id;
             _orderRepository.Commit();
+
             return Redirect(session.Url);
         }
         public async Task<IActionResult> Success(int orderId)
@@ -93,7 +109,7 @@ namespace Movie.Areas.Customer.Controllers
             var userId = _userManager.GetUserId(User);
             var user = _userManager.Users.FirstOrDefault(e => e.Id == userId);
             var cartItems = _cartRepository.Get(filter: e => e.ApplicationUserId == userId);
-            var order = _orderRepository.GetOne(filter: e => e.OrderId == orderId);
+            var order = _orderRepository.GetOne(filter: e => e.OrderId == orderId && e.ApplicationUserId == userId);
             if (order != null && order.Status == false)
             {
                 var service = new SessionService();
@@ -103,7 +119,7 @@ namespace Movie.Areas.Customer.Controllers
                 order.Status = true;
                 order.PaymentStatus = enPaymentStatus.Processing;
                 string subject = "Order Confirmation - Movie Store";
-                string body = EmailTemplate.OrderConfirmationBody(order,Request.Host,Request.Scheme);
+                string body = EmailTemplate.OrderConfirmationBody(order, Request.Host, Request.Scheme);
                 await _emailSender.SendEmailAsync(user.Email, subject, body);
 
                 _cartRepository.DeleteRange(cartItems.ToList());
