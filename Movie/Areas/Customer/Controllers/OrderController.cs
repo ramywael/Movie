@@ -47,7 +47,7 @@ namespace Movie.Areas.Customer.Controllers
             {
                 RefundCreateOptions options = new RefundCreateOptions()
                 {
-                    Amount = (long)order.TotalSum,
+                    Amount = (long)order.TotalSum * 100,
                     PaymentIntent = order.PaymentStripeId,
                     Reason = RefundReasons.RequestedByCustomer,
                 };
@@ -75,9 +75,12 @@ namespace Movie.Areas.Customer.Controllers
                     PaymentIntent = orderItem.Order.PaymentStripeId,
                     Reason = RefundReasons.RequestedByCustomer,
                 };
+
                 var service = new RefundService();
                 var session = service.Create(options);
                 _orderItemRepository.Delete(orderItem);
+
+                orderItem.Order.TotalSum -= orderItem.Price * orderItem.Count;
                 _orderItemRepository.Commit();
                 var remainingItems = _orderItemRepository.Get(filter: e => e.OrderId == orderId);
 
@@ -86,9 +89,9 @@ namespace Movie.Areas.Customer.Controllers
                     orderItem.Order.Status = false;
                     orderItem.Order.PaymentStatus = enPaymentStatus.Cancelled;
                     orderItem.Order.PaymentStripeId = null;
+                    _orderItemRepository.Commit();
                 }
 
-                _orderItemRepository.Commit();
                 return View("Refund");
             }
             return View("~/Views/Shared/NotFoundPage.cshtml");
