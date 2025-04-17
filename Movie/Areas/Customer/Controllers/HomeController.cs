@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Movie.Date;
 using Movie.Models;
-using Movie.Repository;
 using Movie.Repository.IRepositories;
 
 namespace Movie.Areas.Customer.Controllers
@@ -18,7 +15,7 @@ namespace Movie.Areas.Customer.Controllers
         public HomeController(IMovieRepository movieRepository, ICategoryRepository categoryRepository, ICinemaRepository cinemaRepository)
         {
             this.cinemaRepository = cinemaRepository;
-            this.movieRepository = movieRepository; 
+            this.movieRepository = movieRepository;
             this.categoryRepository = categoryRepository;
         }
         //MovieRepository movieRepository = new MovieRepository();
@@ -26,26 +23,42 @@ namespace Movie.Areas.Customer.Controllers
         //CinemaRepository cinemaRepository = new CinemaRepository();
         public IActionResult Index(string movieName)
         {
-          var movies = movieRepository.Get(
-              includes : [
-                  e=>e.category
-                  ]
-              );
+            var movies = movieRepository.Get(
+                includes: [
+                    e=>e.category
+                    ]
+                );
+            var now = DateTime.Now;
 
             if (movieName != null)
             {
-                 movies = movieRepository.Get(
-                 filter: e=>e.Name.Contains(movieName)
-                , includes: [
-                  e=>e.category
-                  ]);
+                movies = movieRepository.Get(
+                filter: e => e.Name.Contains(movieName)
+               , includes: [
+                 e=>e.category
+                 ]);
             }
-            if(!movies.Any())
+            if (!movies.Any())
             {
                 return View("NotFoundPage");
             }
-          
-           return View(movies.ToList());  
+            foreach (var movie in movies)
+            {
+                if (now < movie.StartDate)
+                {
+                    movie.MovieStatus = MovieStatus.Upcoming;
+                }
+                else if (now > movie.EndDate)
+                {
+                    movie.MovieStatus = MovieStatus.Expired;
+                }
+                else
+                {
+                    movie.MovieStatus = MovieStatus.Avaliable;
+                }
+            }
+            movieRepository.Commit();
+            return View(movies.ToList());
         }
 
         public IActionResult Details(int movieId)
@@ -53,7 +66,7 @@ namespace Movie.Areas.Customer.Controllers
             var movie = movieRepository.GetDetailsByMovieId(movieId);
             return View(movie);
         }
-       
+
         public IActionResult Category()
         {
             var category = categoryRepository.Get();
@@ -64,7 +77,7 @@ namespace Movie.Areas.Customer.Controllers
         {
             //var movies = dbContext.movies.Include(e=>e.category).Where(e=>e.CategoryId== category.Id);
             var movies = movieRepository.Get(
-                filter:e=>e.CategoryId==category.Id,
+                filter: e => e.CategoryId == category.Id,
                 includes: [
                 e=>e.category,
                 ]);
@@ -80,7 +93,7 @@ namespace Movie.Areas.Customer.Controllers
         {
             // var movieFilms = dbContext.movies.Include(e => e.cinema).Include(e=>e.category).Where(e => e.CinemaId == cinema.Id);
             var movies = movieRepository.Get(
-                filter:e=>e.CinemaId==cinema.Id,
+                filter: e => e.CinemaId == cinema.Id,
                 includes: [
                 e=>e.cinema,
                 e=>e.category,

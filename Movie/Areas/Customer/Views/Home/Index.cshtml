@@ -41,22 +41,19 @@
                             </a>
                         </div>
                         <!-- Status Badge -->
-                        @if (DateTime.Now >= movie.StartDate && DateTime.Now <= movie.EndDate)
+                        @if(movie.MovieStatus == MovieStatus.Avaliable)
                         {
-                            movie.MovieStatus = MovieStatus.Avaliable;
                             <span class="position-absolute top-0 start-0 m-2 badge bg-success">@movie.MovieStatus</span>
-                        }
-                        else if (DateTime.Now < movie.StartDate)
+
+                        }else if(movie.MovieStatus == MovieStatus.Upcoming)
                         {
-                            movie.MovieStatus = MovieStatus.Upcoming;
                             <span class="position-absolute top-0 start-0 m-2 badge bg-warning">@movie.MovieStatus</span>
+
                         }
                         else
                         {
-                            movie.MovieStatus = MovieStatus.Expired;
                             <span class="position-absolute top-0 start-0 m-2 badge bg-danger">@movie.MovieStatus</span>
-                        }
-
+                        }                        
                         <!-- Push buttons to the bottom -->
                         <div class="mt-auto">
                             <a href="/Customer/Home/Details?movieId=@movie.Id" class="btn btn-primary w-100 mb-2">Details</a>

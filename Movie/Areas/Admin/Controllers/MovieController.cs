@@ -42,6 +42,7 @@ namespace Movie.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(MovieFilm movie, IFormFile file)
         {
+            var now= DateTime.Now;
             if (ModelState.IsValid)
             {
                 if (file != null && file.Length > 0)
@@ -61,8 +62,18 @@ namespace Movie.Areas.Admin.Controllers
                     // Save Img into database
                     movie.ImgUrl = fileName;
 
-
-
+                    if (now < movie.StartDate)
+                    {
+                        movie.MovieStatus = MovieStatus.Upcoming;
+                    }
+                    else if (now > movie.EndDate)
+                    {
+                        movie.MovieStatus = MovieStatus.Expired;
+                    }
+                    else
+                    {
+                        movie.MovieStatus = MovieStatus.Avaliable;
+                    }
                     movieRepository.Create(movie);
                     movieRepository.Commit();
                     TempData["Notification"] = "Add Movie Successfully";

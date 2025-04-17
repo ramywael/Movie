@@ -63,18 +63,7 @@
                         </div>
                     </div>
                     <!-- Movie Status (Auto-Calculated) -->
-                    @if (DateTime.Now >= Model.StartDate && DateTime.Now <= Model.EndDate)
-                    {
-                        Model.MovieStatus = MovieStatus.Avaliable;
-                    }
-                    else if (DateTime.Now < Model.StartDate)
-                    {
-                        Model.MovieStatus = MovieStatus.Upcoming;
-                    }
-                    else
-                    {
-                        Model.MovieStatus = MovieStatus.Expired;
-                    }
+                    
                     <input type="hidden" name="MovieStatus" value="@Model.MovieStatus">
 
                     <div class="mb-3">
