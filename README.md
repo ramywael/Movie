@@ -1,4 +1,4 @@
-# 🎬 Movie Market - Cinema Ticketing System
+# 🎬 Movie Point - Cinema Ticketing System
 
 A full-stack cinema ticketing platform built with **ASP.NET MVC**, allowing users to browse, book, and refund movie tickets, and enabling admins to manage the movie ecosystem effectively.
 
